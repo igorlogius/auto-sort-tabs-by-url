@@ -1,0 +1,17 @@
+{
+  "author": "igorlogius",
+  "homagepage_url": "https://github.com/igorlogius",
+  "browser_action": {
+    "default_area": "navbar"
+  },
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "icons": {
+    "512": "icon.png"
+  },
+  "manifest_version": 2,
+  "name": "Auto Sort Tabs by URL",
+  "permissions": ["tabs", "storage"],
+  "version": "1.0.0"
+}
