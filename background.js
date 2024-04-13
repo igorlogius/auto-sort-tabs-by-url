@@ -48,11 +48,15 @@ function onBAClicked(tab) {
     enabled = false;
     browser.browserAction.setBadgeText({ text: "OFF" });
     browser.browserAction.setBadgeBackgroundColor({ color: "red" });
+    browser.tabs.onUpdated.removeListener(onTabUpdated);
+    browser.tabs.onMoved.removeListener(onTabMoved);
   } else {
     enabled = true;
     browser.browserAction.setBadgeText({ text: "ON" });
     browser.browserAction.setBadgeBackgroundColor({ color: "green" });
     delayedSort(tab.windowId);
+    browser.tabs.onUpdated.addListener(onTabUpdated, { properties: ["url"] });
+    browser.tabs.onMoved.addListener(onTabMoved);
   }
   setToStorage("enabled", enabled);
 }
@@ -69,13 +73,13 @@ function onBAClicked(tab) {
       .forEach((wid) => {
         delayedSort(wid);
       });
+    browser.tabs.onUpdated.addListener(onTabUpdated, { properties: ["url"] });
+    browser.tabs.onMoved.addListener(onTabMoved);
   } else {
     browser.browserAction.setBadgeText({ text: "OFF" });
     browser.browserAction.setBadgeBackgroundColor({ color: "red" });
   }
 
   //
-  browser.tabs.onUpdated.addListener(onTabUpdated, { properties: ["url"] });
   browser.browserAction.onClicked.addListener(onBAClicked);
-  browser.tabs.onMoved.addListener(onTabMoved);
 })();

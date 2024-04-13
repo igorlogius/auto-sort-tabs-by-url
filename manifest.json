@@ -10,8 +10,9 @@
   "icons": {
     "512": "icon.png"
   },
+  "description" : "Automatically sort tabs by doing a lexographical comparision of the tab URL",
   "manifest_version": 2,
   "name": "Auto Sort Tabs by URL",
   "permissions": ["tabs", "storage"],
-  "version": "1.0.0"
+  "version": "1.0.1"
 }
