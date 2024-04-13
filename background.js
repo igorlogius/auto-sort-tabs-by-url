@@ -28,7 +28,7 @@ function delayedSort(winId) {
   if (timerIds.has(winId)) {
     clearTimeout(timerIds.get(winId));
   }
-  timerIds.set(winId, setTimeout(sortTabs.bind(null, winId), 3000));
+  timerIds.set(winId, setTimeout(sortTabs.bind(null, winId), 1500));
 }
 
 async function onTabUpdated(tabId, changeInfo, tabInfo) {
@@ -37,83 +37,46 @@ async function onTabUpdated(tabId, changeInfo, tabInfo) {
   }
 }
 
-async function onTabMoved(tabId, moveInfo) {
-  delayedSort(moveInfo.windowId);
+async function sortFocusedWindow() {
+  const cwin = await browser.windows.getCurrent({
+    populate: false,
+  });
+  delayedSort(cwin.id);
+}
+
+function setBadgeOFF() {
+  browser.browserAction.setBadgeText({ text: "OFF" });
+  browser.browserAction.setBadgeBackgroundColor({ color: "red" });
+}
+
+function setBadgeON() {
+  browser.browserAction.setBadgeText({ text: "ON" });
+  browser.browserAction.setBadgeBackgroundColor({ color: "green" });
 }
 
 function onBAClicked(tab, info) {
   if (enabled) {
     enabled = false;
-    browser.browserAction.setBadgeText({ text: "OFF" });
-    browser.browserAction.setBadgeBackgroundColor({ color: "red" });
+    setBadgeOFF();
     browser.tabs.onUpdated.removeListener(onTabUpdated);
-    browser.tabs.onMoved.removeListener(onTabMoved);
   } else {
     enabled = true;
-    browser.browserAction.setBadgeText({ text: "ON" });
-    browser.browserAction.setBadgeBackgroundColor({ color: "green" });
-    delayedSort(tab.windowId);
+    setBadgeON();
     browser.tabs.onUpdated.addListener(onTabUpdated, { properties: ["url"] });
-    browser.tabs.onMoved.addListener(onTabMoved);
+    delayedSort(tab.windowId);
   }
   setToStorage("enabled", enabled);
 }
 
-// restore icon status
+// init/restore
 (async () => {
-  //
   enabled = await getFromStorage("boolean", "enabled", false);
   if (enabled) {
-    browser.browserAction.setBadgeText({ text: "ON" });
-    browser.browserAction.setBadgeBackgroundColor({ color: "green" });
-    sortAllWindows();
+    setBadgeON();
+    sortFocusedWindow();
     browser.tabs.onUpdated.addListener(onTabUpdated, { properties: ["url"] });
-    browser.tabs.onMoved.addListener(onTabMoved);
   } else {
-    browser.browserAction.setBadgeText({ text: "OFF" });
-    browser.browserAction.setBadgeBackgroundColor({ color: "red" });
+    setBadgeOFF();
   }
-
-  //
   browser.browserAction.onClicked.addListener(onBAClicked);
 })();
-
-browser.menus.create({
-  title: "Sort Tabs (Current Window)",
-  contexts: ["browser_action"],
-  onclick: (tab) => {
-    sortThisWindow();
-  },
-});
-
-browser.menus.create({
-  title: "Sort Tabs (All Windows)",
-  contexts: ["browser_action"],
-  onclick: (tab) => {
-    sortAllWindows();
-  },
-});
-
-async function sortAllWindows() {
-  (await browser.windows.getAll({ populate: false, windowTypes: ["normal"] }))
-    .map((w) => w.id)
-    .forEach((wid) => {
-      delayedSort(wid);
-    });
-}
-
-async function sortThisWindow() {
-  const cwin = await browser.windows.getCurrent({
-    populate: false,
-    //windowTypes: ["normal"],
-  });
-  delayedSort(cwin.id);
-}
-
-browser.commands.onCommand.addListener(async (cmd) => {
-  if (cmd === "sortThisWindow") {
-    sortFocusedWindow();
-  } else if (cmd === "sortAllWindows") {
-    sortAllWindows();
-  }
-});

@@ -8,14 +8,7 @@
     "scripts": ["background.js"]
   },
   "commands": {
-    "sortAllWindows": {
-      "suggested_key": {},
-      "description": "Sort Tabs (All Windows)"
-    },
-    "sortThisWindow": {
-      "suggested_key": {},
-      "description": "Sort Tabs (Current Window)"
-    }
+    "_execute_browser_action": {}
   },
   "icons": {
     "512": "icon.png"
@@ -24,5 +17,5 @@
   "manifest_version": 2,
   "name": "Auto Sort Tabs by URL",
   "permissions": ["tabs", "storage", "menus"],
-  "version": "1.0.2"
+  "version": "1.0.3"
 }
