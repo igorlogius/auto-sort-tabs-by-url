@@ -7,12 +7,22 @@
   "background": {
     "scripts": ["background.js"]
   },
+  "commands": {
+    "sortAllWindows": {
+      "suggested_key": {},
+      "description": "Sort Tabs (All Windows)"
+    },
+    "sortThisWindow": {
+      "suggested_key": {},
+      "description": "Sort Tabs (Current Window)"
+    }
+  },
   "icons": {
     "512": "icon.png"
   },
-  "description" : "Automatically sort tabs by doing a lexographical comparision of the tab URL",
+  "description": "Automatically sort tabs by doing a lexographical comparision of the tab URL",
   "manifest_version": 2,
   "name": "Auto Sort Tabs by URL",
-  "permissions": ["tabs", "storage"],
-  "version": "1.0.1"
+  "permissions": ["tabs", "storage", "menus"],
+  "version": "1.0.2"
 }
